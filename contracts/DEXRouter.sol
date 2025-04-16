@@ -16,9 +16,13 @@ contract DEXRouter {
         address pair = factory.getPair(tokenA, tokenB);
         require(pair != address(0), "Pair doesn't exist");
 
-        IERC20(tokenA).transferFrom(msg.sender, pair, amountA);
-        IERC20(tokenB).transferFrom(msg.sender, pair, amountB);
-        DEXPair(pair).addLiquidity(amountA, amountB);
+        IERC20(tokenA).transferFrom(msg.sender, address(this), amountA);
+        IERC20(tokenB).transferFrom(msg.sender, address(this), amountB);
+
+        IERC20(tokenA).approve(pair, amountA);
+        IERC20(tokenB).approve(pair, amountB);
+
+        DEXPair(pair).addLiquidity(amountA, amountB, msg.sender);
     }
 
     function removeLiquidity(address tokenA, address tokenB, uint liquidity) external {
@@ -33,7 +37,10 @@ contract DEXRouter {
         address pair = factory.getPair(tokenIn, tokenOut);
         require(pair != address(0), "Pair doesn't exist");
 
-        IERC20(tokenIn).transferFrom(msg.sender, pair, amountIn);
-        DEXPair(pair).swap(amountIn, tokenIn);
+        
+        IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn);
+        IERC20(tokenIn).approve(pair, amountIn);
+
+        DEXPair(pair).swap(amountIn, tokenIn, msg.sender);
     }
 }

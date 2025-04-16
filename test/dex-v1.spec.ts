@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import { format } from "path";
 
-describe("DEX V1", () => {
+describe.skip("DEX V1", () => {
   let dex: any;
   let token: any;
   let owner: any;

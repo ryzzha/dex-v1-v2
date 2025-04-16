@@ -20,7 +20,7 @@ contract DEXPair is ERC20 {
         reserve1 = uint112(IERC20(token1).balanceOf(address(this)));
     }
 
-    function addLiquidity(uint amount0, uint amount1) external returns (uint liquidity) {
+    function addLiquidity(uint amount0, uint amount1, address to) external returns (uint liquidity) {
         IERC20(token0).transferFrom(msg.sender, address(this), amount0);
         IERC20(token1).transferFrom(msg.sender, address(this), amount1);
 
@@ -34,7 +34,7 @@ contract DEXPair is ERC20 {
         }
 
         require(liquidity > 0, "Insufficient liquidity");
-        _mint(msg.sender, liquidity);
+        _mint(to, liquidity);
         _updateReserves();
     }
 
@@ -50,7 +50,7 @@ contract DEXPair is ERC20 {
         _updateReserves();
     }
 
-    function swap(uint amountIn, address fromToken) external {
+    function swap(uint amountIn, address fromToken, address to) external {
         require(amountIn > 0, "Invalid input");
 
         bool isToken0 = fromToken == token0;
@@ -62,7 +62,7 @@ contract DEXPair is ERC20 {
         uint amountInWithFee = amountIn * 997;
         uint amountOut = (amountInWithFee * reserveOut) / (reserveIn * 1000 + amountInWithFee);
 
-        IERC20(output).transfer(msg.sender, amountOut);
+        IERC20(output).transfer(to, amountOut);
         _updateReserves();
     }
 
